@@ -1,4 +1,5 @@
 ---
+name: rev-struct
 description: Reconstruct data structures by analyzing memory access patterns across functions
 ---
 
@@ -8,20 +9,29 @@ Recover data structure definitions by analyzing memory access patterns in functi
 
 ## Pre-check
 
-**First, verify that IDA-NO-MCP exported data exists in the current directory:**
+**Determine which IDA access method is available:**
+
+**Option A — IDA Pro MCP (preferred if connected):**
+Check if the IDA Pro MCP server is connected (look for an active `ida-pro` or equivalent MCP connection). If connected, you can query IDA directly via MCP tools — no exported files needed. Proceed with the analysis using MCP.
+
+**Option B — IDA-NO-MCP exported data:**
+If MCP is not connected, check if IDA-NO-MCP exported data exists in the current directory:
 
 1. Check if `decompile/` directory exists
 2. Check if there are `.c` files inside
 
-If not found, prompt the user:
+If neither MCP nor exported data is available, prompt the user:
 ```
-IDA-NO-MCP export data not detected.
+No IDA access method detected. Choose one of the following:
 
-Please export decompilation results using IDA-NO-MCP plugin first:
-1. Download plugin: https://github.com/P4nda0s/IDA-NO-MCP
-2. Copy INP.py to IDA plugins directory
-3. Press Ctrl-Shift-E in IDA to export
-4. Open the exported directory with Claude Code
+Option A — IDA Pro MCP (recommended):
+  Connect the IDA Pro MCP server so Claude can query IDA directly.
+
+Option B — IDA-NO-MCP export:
+  1. Download plugin: https://github.com/P4nda0s/IDA-NO-MCP
+  2. Copy INP.py to IDA plugins directory
+  3. Press Ctrl-Shift-E in IDA to export
+  4. Open the exported directory with Claude Code
 ```
 
 ---
@@ -187,18 +197,4 @@ struct suggested_name {
 // Field access examples:
 // 0x401000: *(this + 0x08) += 1;     // refcount++
 // 0x401100: printf("%s", *(this + 0x10));  // print name
-```
-
----
-
-## Usage Examples
-
-```
-/reverse-engineering:rev-struct 0x401000
-```
-
-Or specify the parameter to analyze:
-
-```
-/reverse-engineering:rev-struct 0x401000 a1
 ```
